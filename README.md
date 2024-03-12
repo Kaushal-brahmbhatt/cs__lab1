@@ -24,22 +24,22 @@ To run the Terraform code:
 
 ## To Disassociate the policy from the role & To Remove the role. 
 1. Get the IAM Role Name
-role_name=$(terraform output -raw cs_ec2_role_name)
+-> role_name=$(terraform output -raw cs_ec2_role_name)
 
 2. Get the Policy ARN
-policy_arn=$(terraform output -raw cs_ec2_policy_arn)
+-> policy_arn=$(terraform output -raw cs_ec2_policy_arn)
 
 3. Get the IAM Instance Profile Name
-instance_profile_name=$(terraform output -raw cs_ec2_instance_profile_name)
+-> instance_profile_name=$(terraform output -raw cs_ec2_instance_profile_name)
 
 4. Detach IAM Policy from Role
-aws iam detach-role-policy --policy-arn $policy_arn --role-name $role_name
+-> aws iam detach-role-policy --policy-arn $policy_arn --role-name $role_name
 
 5. Remove IAM Role from Instance Profile
-aws iam remove-role-from-instance-profile --role-name $role_name --instance-profile-name $instance_profile_name
+-> aws iam remove-role-from-instance-profile --role-name $role_name --instance-profile-name $instance_profile_name
 
 6. Delete Instance Profile
-aws iam delete-instance-profile --instance-profile-name $instance_profile_name
+-> aws iam delete-instance-profile --instance-profile-name $instance_profile_name
 
 7. Delete IAM Role
-aws iam delete-role --role-name $role_name
+-> aws iam delete-role --role-name $role_name
