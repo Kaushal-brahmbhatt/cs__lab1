@@ -1,3 +1,8 @@
+data "vault_kv_secret_v2" "rds" {
+  mount = "kv"
+  name  = "rds"
+} 
+
 resource "aws_iam_role" "cs_ec2_role" {
   name = "cs_ec2_role"
   assume_role_policy = jsonencode({
@@ -85,8 +90,22 @@ resource "aws_instance" "cs_instance" {
   instance_type        = "t2.micro"
   key_name             = aws_key_pair.cs_key.key_name
   subnet_id            = aws_subnet.cs_subnet.id
-    iam_instance_profile = aws_iam_instance_profile.cs_ec2_instance_profile.name
+  iam_instance_profile = aws_iam_instance_profile.cs_ec2_instance_profile.name
   tags = {
     Name = "cs-instance"
   }
+}
+
+resource "aws_db_instance" "cs_db" {
+  allocated_storage      = 20
+  storage_type           = "gp2"
+  engine                 = "mysql"
+  engine_version         = "5.7"
+  instance_class         = "db.t2.micro"
+  db_name                = "cs"
+  username               = data.vault_kv_secret_v2.rds.data.username
+  password               = data.vault_kv_secret_v2.rds.data.password
+  parameter_group_name   = "default.mysql5.7"
+  skip_final_snapshot    = true
+  vpc_security_group_ids = [aws_security_group.cs_sg.id]
 }
